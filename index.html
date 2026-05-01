@@ -7,89 +7,56 @@
 
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: #0f212e;
-      color: #ffffff;
+      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
       margin: 0;
     }
 
-    .container {
+    .box {
       background: #1a2c38;
-      padding: 30px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 420px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      padding: 25px;
+      border-radius: 10px;
+      width: 350px;
     }
 
     h1 {
       text-align: center;
       color: #00e701;
-      margin-bottom: 20px;
     }
 
-    label {
-      display: block;
-      margin-top: 15px;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    select, input {
+    select, input, button {
       width: 100%;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
       border: none;
-      font-size: 16px;
-      box-sizing: border-box;
     }
 
     button {
-      width: 100%;
-      margin-top: 20px;
-      padding: 14px;
       background: #00e701;
-      color: #0f212e;
-      border: none;
-      border-radius: 8px;
-      font-size: 18px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    button:hover {
-      background: #00c901;
-    }
-
     .result {
-      margin-top: 25px;
-      background: #0f212e;
-      padding: 15px;
-      border-radius: 8px;
-      font-size: 18px;
+      margin-top: 20px;
       text-align: center;
       line-height: 1.5;
-    }
-
-    .note {
-      margin-top: 15px;
-      font-size: 12px;
-      color: #b1bad3;
-      text-align: center;
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>VIP Progress Calculator</h1>
+  <div class="box">
+    <h1>VIP Calculator</h1>
 
-    <label for="vipLevel">Nível VIP atual:</label>
     <select id="vipLevel">
+      <option value="nonvip">Non-VIP</option>
       <option value="bronze">Bronze</option>
       <option value="prata">Prata</option>
       <option value="ouro">Ouro</option>
@@ -107,18 +74,11 @@
       <option value="obsidiana">Obsidiana</option>
     </select>
 
-    <label for="progress">Progresso atual (%):</label>
-    <input type="number" id="progress" placeholder="Ex: 72" min="0" max="100">
+    <input type="number" id="progress" placeholder="Progresso % (ex: 70)">
 
     <button onclick="calculate()">Calcular</button>
 
-    <div class="result" id="result">
-      Insira os dados acima para calcular.
-    </div>
-
-    <div class="note">
-      O cálculo considera que a porcentagem informada é o progresso até o próximo nível VIP.
-    </div>
+    <div class="result" id="result"></div>
   </div>
 
   <script>
@@ -141,6 +101,7 @@
     };
 
     const vipNames = {
+      nonvip: "Non-VIP",
       bronze: "Bronze",
       prata: "Prata",
       ouro: "Ouro",
@@ -158,33 +119,42 @@
       obsidiana: "Obsidiana"
     };
 
-    function formatBRL(value) {
-      return value.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-    }
+    const nextLevels = {
+      nonvip: "bronze",
+      bronze: "prata",
+      prata: "ouro",
+      ouro: "platina1",
+      platina1: "platina2",
+      platina2: "platina3",
+      platina3: "platina4",
+      platina4: "platina5",
+      platina5: "platina6",
+      platina6: "diamante1",
+      diamante1: "diamante2",
+      diamante2: "diamante3",
+      diamante3: "diamante4",
+      diamante4: "diamante5",
+      diamante5: "obsidiana"
+    };
 
     function calculate() {
-      const level = document.getElementById("vipLevel").value;
+      const currentLevel = document.getElementById("vipLevel").value;
       const progress = Number(document.getElementById("progress").value);
-      const resultBox = document.getElementById("result");
 
       if (progress < 0 || progress > 100 || isNaN(progress)) {
-        resultBox.innerHTML = "Por favor, insira um progresso válido entre 0 e 100.";
+        document.getElementById("result").innerText = "Digite um valor entre 0 e 100";
         return;
       }
 
-      const target = vipTargets[level];
+      const nextLevel = nextLevels[currentLevel];
+      const target = vipTargets[nextLevel];
       const remaining = target * ((100 - progress) / 100);
 
-      resultBox.innerHTML =
-        "<strong>Nível selecionado:</strong> " + vipNames[level] + "<br>" +
-        "<strong>Meta total:</strong> " + formatBRL(target) + "<br>" +
-        "<strong>Progresso atual:</strong> " + progress + "%<br><br>" +
-        "<strong>Falta apostar:</strong><br>" + formatBRL(remaining);
+      document.getElementById("result").innerHTML =
+        "<strong>Nível atual:</strong> " + vipNames[currentLevel] + "<br>" +
+        "<strong>Próximo nível:</strong> " + vipNames[nextLevel] + "<br>" +
+        "<strong>Meta:</strong> R$ " + target.toLocaleString("pt-BR") + "<br><br>" +
+        "<strong>Falta apostar:</strong><br>R$ " + remaining.toLocaleString("pt-BR");
     }
   </script>
 </body>
