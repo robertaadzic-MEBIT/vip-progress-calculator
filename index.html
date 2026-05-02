@@ -138,23 +138,32 @@
     };
 
     function calculate() {
-      const currentLevel = document.getElementById("vipLevel").value;
-      const progress = Number(document.getElementById("progress").value);
+     const currentLevel = document.getElementById("vipLevel").value;
+    const progress = Number(document.getElementById("progress").value);
 
-      if (progress < 0 || progress > 100 || isNaN(progress)) {
-        document.getElementById("result").innerText = "Digite um valor entre 0 e 100";
-        return;
-      }
+    if (progress < 0 || progress > 100 || isNaN(progress)) {
+      document.getElementById("result").innerText = "Digite um valor entre 0 e 100";
+      return;
+    }
 
-      const nextLevel = nextLevels[currentLevel];
-      const target = vipTargets[nextLevel];
-      const remaining = target * ((100 - progress) / 100);
+    const nextLevel = nextLevels[currentLevel];
 
+    if (!nextLevel) {
       document.getElementById("result").innerHTML =
-        "<strong>Nível atual:</strong> " + vipNames[currentLevel] + "<br>" +
-        "<strong>Próximo nível:</strong> " + vipNames[nextLevel] + "<br>" +
-        "<strong>Meta:</strong> R$ " + target.toLocaleString("pt-BR") + "<br><br>" +
-        "<strong>Falta apostar:</strong><br>R$ " + remaining.toLocaleString("pt-BR");
+        "Você já está no nível máximo: <strong>" + vipNames[currentLevel] + "</strong>.";
+      return;
+    }
+
+    const target = vipTargets[nextLevel];
+    const remaining = target * ((100 - progress) / 100);
+
+    document.getElementById("result").innerHTML =
+      "Você está atualmente no nível <strong>" + vipNames[currentLevel] + "</strong>.<br><br>" +
+      "O seu próximo nível é <strong>" + vipNames[nextLevel] + "</strong>.<br><br>" +
+      "Para alcançar esse nível, ainda falta apostar:<br>" +
+      "<strong>R$ " + remaining.toLocaleString("pt-BR") + "</strong>.<br><br>" +
+      "Lembre-se: apostas em esportes contam 3 vezes mais para o progresso VIP, " +
+      "então apostando em esportes você avança para o próximo nível 3 vezes mais rápido.";
     }
   </script>
 </body>
